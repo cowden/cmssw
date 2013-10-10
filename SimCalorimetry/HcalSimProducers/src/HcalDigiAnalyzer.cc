@@ -1,5 +1,4 @@
 #include "SimCalorimetry/HcalSimProducers/src/HcalDigiAnalyzer.h"
-#include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include<iostream>
 
@@ -17,19 +16,20 @@ HcalDigiAnalyzer::HcalDigiAnalyzer(edm::ParameterSet const& conf)
   hbheDigiStatistics_("HBHEDigi", 4, 10., 6., 0.1, 0.5, hbheHitAnalyzer_),
   hoDigiStatistics_("HODigi", 4, 10., 6., 0.1, 0.5, hoHitAnalyzer_),
   hfDigiStatistics_("HFDigi", 3, 10., 6., 0.1, 0.5, hfHitAnalyzer_),
-  zdcDigiStatistics_("ZDCDigi", 3, 10., 6., 0.1, 0.5, zdcHitAnalyzer_),
-  hbheDigiCollectionTag_(conf.getParameter<edm::InputTag>("hbheDigiCollectionTag")),
-  hoDigiCollectionTag_(conf.getParameter<edm::InputTag>("hoDigiCollectionTag")),
-  hfDigiCollectionTag_(conf.getParameter<edm::InputTag>("hfDigiCollectionTag"))
+  zdcDigiStatistics_("ZDCDigi", 3, 10., 6., 0.1, 0.5, zdcHitAnalyzer_)
 {
+  tok_hbhe_ = consumes<HBHEDigiCollection>(conf.getParameter<edm::InputTag>("hbheDigiCollectionTag"));
+  tok_ho_ = consumes<HODigiCollection>(conf.getParameter<edm::InputTag>("hoDigiCollectionTag"));
+  tok_hf_ = consumes<HFDigiCollection>(conf.getParameter<edm::InputTag>("hfDigiCollectionTag"));
+  tok_cf_ = consumes<CrossingFrame<PCaloHit> >(edm::InputTag("mix", "HcalHits"));
 }
 
 
 namespace HcalDigiAnalyzerImpl {
   template<class Collection>
-  void analyze(edm::Event const& e, HcalDigiStatistics & statistics, edm::InputTag& tag) {
+  void analyze(edm::Event const& e, HcalDigiStatistics & statistics, edm::EDGetTokenT<Collection>& tag) {
     edm::Handle<Collection> digis;
-    e.getByLabel(tag, digis);
+    e.getByToken(tag, digis);
     for(unsigned i = 0; i < digis->size(); ++i) {
       std::cout << (*digis)[i] << std::endl;
       statistics.analyze((*digis)[i]);
@@ -41,7 +41,7 @@ namespace HcalDigiAnalyzerImpl {
 void HcalDigiAnalyzer::analyze(edm::Event const& e, edm::EventSetup const& c) {
   // Step A: Get Inputs
   edm::Handle<CrossingFrame<PCaloHit> > cf, zdccf;
-  e.getByLabel("mix", "HcalHits",cf);
+  e.getByToken(tok_cf_,cf);
   //e.getByLabel("mix", "ZDCHits", zdccf);
   
   // test access to SimHits for HcalHits and ZDC hits
@@ -51,8 +51,8 @@ void HcalDigiAnalyzer::analyze(edm::Event const& e, edm::EventSetup const& c) {
   hoHitAnalyzer_.fillHits(*hits);
   hfHitAnalyzer_.fillHits(*hits);
   //zdcHitAnalyzer_.fillHits(*zdcHits);
-  HcalDigiAnalyzerImpl::analyze<HBHEDigiCollection>(e, hbheDigiStatistics_, hbheDigiCollectionTag_);
-  HcalDigiAnalyzerImpl::analyze<HODigiCollection>(e, hoDigiStatistics_, hoDigiCollectionTag_);
-  HcalDigiAnalyzerImpl::analyze<HFDigiCollection>(e, hfDigiStatistics_, hfDigiCollectionTag_);
+  HcalDigiAnalyzerImpl::analyze<HBHEDigiCollection>(e, hbheDigiStatistics_, tok_hbhe_);
+  HcalDigiAnalyzerImpl::analyze<HODigiCollection>(e, hoDigiStatistics_, tok_ho_);
+  HcalDigiAnalyzerImpl::analyze<HFDigiCollection>(e, hfDigiStatistics_, tok_hf_);
   //HcalDigiAnalyzerImpl::analyze<ZDCDigiCollection>(e, zdcDigiStatistics_);
 }

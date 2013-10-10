@@ -14,6 +14,7 @@
 #include "SimCalorimetry/HcalSimAlgos/interface/ZDCHitFilter.h"
 #include "SimCalorimetry/HcalSimProducers/src/HcalDigiStatistics.h"
 #include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
+#include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
 #include <string>
 
 /** Studies Hcal digis
@@ -46,9 +47,10 @@ private:
   HcalDigiStatistics hfDigiStatistics_;
   HcalDigiStatistics zdcDigiStatistics_;
 
-  edm::InputTag hbheDigiCollectionTag_;
-  edm::InputTag hoDigiCollectionTag_;
-  edm::InputTag hfDigiCollectionTag_;
+  edm::EDGetTokenT<HBHEDigiCollection> tok_hbhe_;
+  edm::EDGetTokenT<HODigiCollection> tok_ho_;
+  edm::EDGetTokenT<HFDigiCollection> tok_hf_;
+  edm::EDGetTokenT<CrossingFrame<PCaloHit> > tok_cf_;
 };
 
 #endif

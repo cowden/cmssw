@@ -12,6 +12,7 @@
 #include "SimCalorimetry/HcalSimAlgos/interface/HOHitFilter.h"
 #include "SimCalorimetry/HcalSimAlgos/interface/HFHitFilter.h"
 #include "SimCalorimetry/HcalSimAlgos/interface/ZDCHitFilter.h"
+#include "DataFormats/HcalRecHit/interface/HcalRecHitCollections.h"
 #include <string>
 
 /** Compares HCAL RecHits to SimHit
@@ -39,9 +40,10 @@ private:
   CaloHitAnalyzer hfAnalyzer_;
   CaloHitAnalyzer zdcAnalyzer_;
 
-  edm::InputTag hbheRecHitCollectionTag_;
-  edm::InputTag hoRecHitCollectionTag_;
-  edm::InputTag hfRecHitCollectionTag_;
+  edm::EDGetTokenT<HBHERecHitCollection> tok_hbhe_;
+  edm::EDGetTokenT<HORecHitCollection> tok_ho_;
+  edm::EDGetTokenT<HFRecHitCollection> tok_hf_;
+  edm::EDGetTokenT<CrossingFrame<PCaloHit> > tok_cf_;
 };
 
 #endif
