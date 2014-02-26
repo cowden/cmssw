@@ -25,7 +25,7 @@
 #include <fstream>
 #include <iomanip>
 
-#define DebugLog
+//#define DebugLog
 
 CFCSD::CFCSD(G4String name, const DDCompactView & cpv,
 	     SensitiveDetectorCatalog & clg, 

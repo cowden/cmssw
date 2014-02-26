@@ -9,7 +9,7 @@
 #include "CLHEP/Units/GlobalSystemOfUnits.h"
 #include <iostream>
 
-#define DebugLog
+//#define DebugLog
 
 CFCNumberingScheme::CFCNumberingScheme(std::vector<double> rv, 
 				       std::vector<double> xv, 
