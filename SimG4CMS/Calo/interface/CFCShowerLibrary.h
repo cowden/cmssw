@@ -30,9 +30,10 @@ struct photon {
   float t;
   int type; // 0: cherenkov   1: scintilation
 //  float tprop;
+  float weight;
   
-  inline photon(double w, double gx, double gy,double gz, double gt, int tp)
-    :wavelength(w),x(gx),y(gy),z(gz),t(gt),type(tp)
+  inline photon(double w, double gx, double gy,double gz, double gt, int tp, double wt)
+    :wavelength(w),x(gx),y(gy),z(gz),t(gt),type(tp),weight(wt)
     { }
 };
 
@@ -54,6 +55,7 @@ public:
     int               type;
     double            lambda;
     double            time;
+    double            weight;
   };
 
   void                initRun(G4ParticleTable * theParticleTable);
@@ -64,8 +66,11 @@ protected:
   void                getRecord(int, std::string, int);
   void                loadEventInfo(TTree *);
   void                interpolate(int, double);
+  void                interpolate2(int, double);
   void                extrapolate(int, double);
+  void                extrapolate2(int, double);
   void                storePhoton(int j, int type);
+  void                storePhoton(int j, int type, double exWeight);
 
 private:
 
@@ -89,6 +94,7 @@ private:
   int                 scin_npe, opt_npe, npe;
   std::vector<photon> scin_pe, opt_pe, pe;
   
+  unsigned int scin_num, opt_num;
   std::vector<float> *scin_fx, *scin_fy, *scin_fz, *scin_t, *scin_wavelength;
   std::vector<float> *opt_fx, *opt_fy, *opt_fz, *opt_t, *opt_wavelength;
 
