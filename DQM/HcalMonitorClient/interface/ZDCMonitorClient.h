@@ -2,7 +2,7 @@
 #define ZDCMonitorClient_H
 
 
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "DQMServices/Core/interface/DQMEDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/Run.h"
 #include "FWCore/Framework/interface/LuminosityBlock.h"
@@ -10,12 +10,11 @@
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
-class DQMStore;
 class TH2F;
 class TH1F;
 class TFile;
 
-class ZDCMonitorClient : public edm::EDAnalyzer{
+class ZDCMonitorClient : public DQMEDAnalyzer{
   
 public:
   
@@ -30,14 +29,13 @@ public:
   void initialize(const edm::ParameterSet& ps);
   void offlineSetup();
 
+  // book histograms
+  virtual void bookHistograms(DQMStore::IBooker &, edm::Run const &, edm::EventSetup const & );
+
   /// Analyze
   void analyze(void);
   void analyze(const edm::Event& evt, const edm::EventSetup& es);
   
-  /// BeginJob
-  void beginJob();
-  /// BeginRun
-  void beginRun(const edm::Run& r, const edm::EventSetup & c);
   /// BeginLumiBlock
   void beginLuminosityBlock(const edm::LuminosityBlock & l, const edm::EventSetup & c);
 
@@ -71,7 +69,6 @@ public:
   bool prescale();
 
  private:
-  void removeAllME(void);
   void writeDBfile();
   /********************************************************/
   //  The following member variables can be specified in  //
@@ -110,9 +107,6 @@ public:
     double updateTime;
   } psTime_;    
   
-  ///Connection to the DQM backend
-  DQMStore* dbe_;  
-  
   // environment variables
   int irun_,ievent_,itime_;
   int ilumisec_;
@@ -128,6 +122,9 @@ public:
   
   bool runningStandalone_;
   bool enableMonitorDaemon_;
+
+  std::vector<MonitorElement *> mes_;
+  MonitorElement * errorSummary_;
 
   std::string inputFile_;
   std::string baseHtmlDir_;
