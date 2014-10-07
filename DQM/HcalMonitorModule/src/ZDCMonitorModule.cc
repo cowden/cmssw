@@ -70,6 +70,8 @@ void ZDCMonitorModule::analyze(edm::Event const& e, edm::EventSetup const& eSetu
 {
   edm::LogInfo("ZDCMonitorModule") <<  "ZDCMonitorModule::analyze" << std::endl;
 
+  h_evNum->Fill(1.);
+  h_evDen->Fill(1.);
 
 }
 //
